@@ -10,8 +10,17 @@
     <div id="example">lala</div>
     <script>
       ReactDOM.render(
-        React.DOM.div({}, 'Snake!'),
-        document.getElementById('example')
+          React.createElement('svg', { 'width': '500', 'height': '500'},
+            React.createElement('rect',{
+              'x': '10',
+              'y': '10',
+              'width': '10',
+              'height': '10',
+              'stroke': 'black',
+              'stroke-width': '10',
+              'fill': 'black'
+            })
+          ), document.getElementById('example')
       );
     </script>
   </body>
