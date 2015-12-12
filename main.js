@@ -29,8 +29,11 @@ var SnakeSegment = React.createClass({
     };
 
     var that = this;
-    var pressedKey = e.key;
-    move = function() { that.setState(newState[pressedKey](that.state.x, that.state.y)); };
+    var newPosition =  newState[e.key];
+    if(newPosition) {
+      move = function() { that.setState(newPosition(that.state.x, that.state.y)); };
+    }
+
   },
 
   render: function() {
