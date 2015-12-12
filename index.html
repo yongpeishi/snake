@@ -3,25 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <title>Hello React!</title>
-    <script src="./node_modules/react/dist/react.min.js"></script>
+    <script src="./node_modules/react/dist/react.js"></script>
     <script src="./node_modules/react-dom/dist/react-dom.min.js"></script>
   </head>
   <body>
-    <div id="example">lala</div>
-    <script>
-      ReactDOM.render(
-          React.createElement('svg', { 'width': '500', 'height': '500'},
-            React.createElement('rect',{
-              'x': '10',
-              'y': '10',
-              'width': '10',
-              'height': '10',
-              'stroke': 'black',
-              'stroke-width': '10',
-              'fill': 'black'
-            })
-          ), document.getElementById('example')
-      );
-    </script>
+    <div id="field"></div>
+    <script src="main.js"></script>
   </body>
 </html>
