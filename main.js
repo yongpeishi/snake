@@ -8,6 +8,7 @@ var Game = React.createClass({
   getInitialState: function() {
     return {
       gameStatus: '',
+      gameScore: 0,
       snake: [ {x:10, y:10} ],
       foodX: 50,
       foodY: 50
@@ -50,7 +51,7 @@ var Game = React.createClass({
 
         if( that.foundFood(futureHead) ) {
           var newFood = that.newFoodPosition();
-          that.setState( { snake: [futureHead].concat( currentSnake ), foodX: newFood.x, foodY: newFood.y });
+          that.setState( { gameScore: that.state.gameScore + 1, snake: [futureHead].concat( currentSnake ), foodX: newFood.x, foodY: newFood.y });
         } else {
           that.setState( { snake: [futureHead].concat( currentSnake.slice(0, currentSnake.length - 1) )});
         }
@@ -89,7 +90,7 @@ var Game = React.createClass({
     }
 
     return React.createElement('div', {},
-      React.createElement('div', {}, this.state.gameStatus),
+      React.createElement(StatusBar, { gameStatus: this.state.gameStatus, gameScore: this.state.gameScore }),
       React.createElement('svg', { 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
         segments,
         React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
@@ -97,6 +98,15 @@ var Game = React.createClass({
     )
   }
 
+});
+
+var StatusBar = React.createClass({
+  render: function() {
+    return React.createElement('div', {style: { 'display': 'flex', 'justifyContent': 'space-around'} },
+      React.createElement('div', {}, this.props.gameStatus),
+      React.createElement('div', {}, this.props.gameScore)
+    )
+  }
 });
 
 var SnakeSegment = React.createClass({
