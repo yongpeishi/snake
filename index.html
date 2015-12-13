@@ -6,11 +6,30 @@
     <script src="./node_modules/react/dist/react.min.js"></script>
     <script src="./node_modules/react-dom/dist/react-dom.min.js"></script>
     <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-width: 1024px;
+        margin: 0 auto;
+      }
+      .instruction, .footnote { text-align: center; }
       #svg-container:focus { outline: none; }
     </style>
   </head>
+
   <body>
-    <div id="game"></div>
+    <div class="container">
+      <div class="instruction">
+        <p>Press any arrow key to start the game!</p>
+      </div>
+
+      <div id="game"></div>
+
+      <div class="footnote">
+        <p>Find the code on <a href="https://github.com/yongpeishi/snake">Github</a></p>
+      </div>
+    </div>
     <script src="main.js"></script>
   </body>
 </html>
