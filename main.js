@@ -1,6 +1,7 @@
 var GRID_SIZE = 10;
 var FIELD_SIZE = 500;
 
+var gameOver = false;
 var move = function() {};
 
 var Game = React.createClass({
@@ -15,19 +16,19 @@ var Game = React.createClass({
   changeDirection: function(e) {
     var newState = {
       'ArrowUp': function(currentX, currentY) {
-        newY = Math.max(currentY - GRID_SIZE, 0);
-        return {x: currentX, y: newY}
+        newY = currentY - GRID_SIZE;
+        return {x: currentX, y: newY};
       },
       'ArrowDown': function(currentX, currentY) {
-        newY = Math.min(currentY + GRID_SIZE, FIELD_SIZE-GRID_SIZE);
+        newY = currentY + GRID_SIZE;
         return {x: currentX, y: newY}
       },
       'ArrowLeft': function(currentX, currentY) {
-        newX = Math.max(currentX - GRID_SIZE, 0);
+        newX = currentX - GRID_SIZE;
         return {x: newX, y: currentY}
       },
       'ArrowRight': function(currentX, currentY) {
-        newX = Math.min(currentX + GRID_SIZE, FIELD_SIZE-GRID_SIZE);
+        newX = currentX + GRID_SIZE;
         return {x: newX, y: currentY}
       }
     };
@@ -39,7 +40,13 @@ var Game = React.createClass({
         var currentSnake = that.state.snake;
         var snakeHead = currentSnake[0];
         var futureHead = newPosition(snakeHead.x, snakeHead.y);
-        if( that.willEatFood(futureHead) ) {
+
+        if(that.runIntoWall(futureHead)) {
+          gameOver = true;
+          return;
+        }
+
+        if( that.foundFood(futureHead) ) {
           var newFood = that.newFoodPosition();
           that.setState( { snake: [futureHead].concat( currentSnake ), foodX: newFood.x, foodY: newFood.y });
         } else {
@@ -49,7 +56,14 @@ var Game = React.createClass({
     }
   },
 
-  willEatFood: function(nextCoordinate) {
+  runIntoWall: function(head) {
+    if(head.x < 0 || head.x >= FIELD_SIZE || head.y < 0 || head.y >= FIELD_SIZE) {
+      return true;
+    }
+    return false;
+  },
+
+  foundFood: function(nextCoordinate) {
     if(nextCoordinate.x === this.state.foodX && nextCoordinate.y === this.state.foodY) {
       return true;
     }
@@ -71,11 +85,17 @@ var Game = React.createClass({
       var segment = this.state.snake[i];
       segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i}) );
     }
+    var gameStatus = '';
+    if(gameOver) {
+      gameStatus = 'GAME OVER';
+    }
 
     return React.createElement('svg', { 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
       segments,
       React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
-  )}
+    )
+  }
+
 });
 
 var SnakeSegment = React.createClass({
@@ -105,7 +125,13 @@ var Food = React.createClass({
 
 
 ReactDOM.render(
-  React.createElement(Game), document.getElementById('field')
+  React.createElement(Game), document.getElementById('game')
 );
 
-setInterval(function() { move() }, 100);
+function runGame() {
+  if(!gameOver) {
+    move();
+  }
+}
+
+setInterval(runGame, 100);
