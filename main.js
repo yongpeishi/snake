@@ -97,7 +97,8 @@ var Game = React.createClass({
 
   render: function() {
     segments = [];
-    for(var i=0; i< this.state.snake.length; i++) {
+    segments.push( React.createElement(SnakeHead, { x: this.state.snake[0].x, y: this.state.snake[0].y, key: 0}) );
+    for(var i=1; i< this.state.snake.length; i++) {
       var segment = this.state.snake[i];
       segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i}) );
     }
@@ -122,6 +123,19 @@ var StatusBar = React.createClass({
   }
 });
 
+var SnakeHead = React.createClass({
+  render: function() {
+    return React.createElement('rect',{
+      x: this.props.x,
+      y: this.props.y,
+      width: GRID_SIZE,
+      height: GRID_SIZE,
+      stroke: 'darkgreen',
+      fill: 'darkgreen'
+    })
+  }
+});
+
 var SnakeSegment = React.createClass({
   render: function() {
     return React.createElement('rect',{
@@ -129,8 +143,8 @@ var SnakeSegment = React.createClass({
       y: this.props.y,
       width: GRID_SIZE,
       height: GRID_SIZE,
-      stroke: 'black',
-      fill: 'black'
+      stroke: 'darkolivegreen',
+      fill: 'darkolivegreen'
     })
   }
 });
