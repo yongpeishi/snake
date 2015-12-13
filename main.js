@@ -133,7 +133,7 @@ var Game = React.createClass({
 
 var StatusBar = React.createClass({
   render: function() {
-    return React.createElement('div', { style: { display: 'flex', justifyContent: 'space-around', padding: '10px 0' } },
+    return React.createElement('div', { style: { display: 'flex', justifyContent: 'space-around', padding: '5px 0' } },
       React.createElement('div', {}, this.props.gameStatus),
       React.createElement('div', {}, 'Score: ' + this.props.gameScore)
     )
