@@ -7,6 +7,7 @@ var move = function() {};
 var Game = React.createClass({
   getInitialState: function() {
     return {
+      gameStatus: '',
       snake: [ {x:10, y:10} ],
       foodX: 50,
       foodY: 50
@@ -43,6 +44,7 @@ var Game = React.createClass({
 
         if(that.runIntoWall(futureHead)) {
           gameOver = true;
+          that.setState( { gameStatus: 'GAME OVER' } );
           return;
         }
 
@@ -85,14 +87,13 @@ var Game = React.createClass({
       var segment = this.state.snake[i];
       segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i}) );
     }
-    var gameStatus = '';
-    if(gameOver) {
-      gameStatus = 'GAME OVER';
-    }
 
-    return React.createElement('svg', { 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
-      segments,
-      React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
+    return React.createElement('div', {},
+      React.createElement('div', {}, this.state.gameStatus),
+      React.createElement('svg', { 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
+        segments,
+        React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
+      )
     )
   }
 
@@ -122,7 +123,6 @@ var Food = React.createClass({
     });
   }
 });
-
 
 ReactDOM.render(
   React.createElement(Game), document.getElementById('game')
