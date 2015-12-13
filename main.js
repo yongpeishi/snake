@@ -109,7 +109,7 @@ var Game = React.createClass({
 
     return React.createElement('div', {},
       React.createElement(StatusBar, { gameStatus: this.state.gameStatus, gameScore: this.state.gameScore }),
-      React.createElement('div', { id: 'svg-container', ref: 'svgContainer', tabIndex: '1', onKeyDown: this.changeDirection },
+      React.createElement('div', { id: 'svg-container', ref: 'svgContainer', style: { display: 'flex', justifyContent: 'center' }, tabIndex: '1', onKeyDown: this.changeDirection },
         React.createElement('svg', { style: { border: '1px solid black' }, 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
           segments,
           React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
