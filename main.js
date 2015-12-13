@@ -1,12 +1,13 @@
 var GRID_SIZE = 10;
+var FIELD_SIZE = 500;
 
 var move = function() {};
 
 var Game = React.createClass({
   getInitialState: function() {
     return {
-      x: 5,
-      y: 5,
+      x: 10,
+      y: 10,
       foodX: 50,
       foodY: 50
     }
@@ -19,7 +20,7 @@ var Game = React.createClass({
         return {x: currentX, y: newY}
       },
       'ArrowDown': function(currentX, currentY) {
-        newY = Math.min(currentY + GRID_SIZE, 500-GRID_SIZE);
+        newY = Math.min(currentY + GRID_SIZE, FIELD_SIZE-GRID_SIZE);
         return {x: currentX, y: newY}
       },
       'ArrowLeft': function(currentX, currentY) {
@@ -27,7 +28,7 @@ var Game = React.createClass({
         return {x: newX, y: currentY}
       },
       'ArrowRight': function(currentX, currentY) {
-        newX = Math.min(currentX + GRID_SIZE, 500-GRID_SIZE);
+        newX = Math.min(currentX + GRID_SIZE, FIELD_SIZE-GRID_SIZE);
         return {x: newX, y: currentY}
       }
     };
@@ -37,13 +38,22 @@ var Game = React.createClass({
     if(newPosition) {
       move = function() { that.setState(newPosition(that.state.x, that.state.y)); };
     }
+    this.generateFood();
+  },
 
+  generateFood: function() {
+    function randomPoint() {
+      var randomNumber = Math.floor(Math.random() * ((FIELD_SIZE-GRID_SIZE) - 0)) + 1;
+      var remainder = randomNumber % GRID_SIZE;
+      return randomNumber - remainder + (GRID_SIZE/2);
+    }
+    this.setState({foodX: randomPoint(), foodY: randomPoint() });
   },
 
   render: function() {
-    return React.createElement('svg', { 'width': '500', 'height': '500', tabIndex: '1', onKeyDown: this.changeDirection },
+    return React.createElement('svg', { 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
       React.createElement(SnakeSegment, { x: this.state.x, y: this.state.y }),
-      React.createElement(Food, { x: this.state.foodX, y: this.state.foodY })
+      React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
   )}
 });
 
@@ -63,8 +73,8 @@ var SnakeSegment = React.createClass({
 var Food = React.createClass({
   render: function() {
     return React.createElement('circle', {
-      cx: this.props.x,
-      cy: this.props.y,
+      cx: this.props.cx,
+      cy: this.props.cy,
       r: (GRID_SIZE/2),
       stroke: 'red',
       fill: 'red'
