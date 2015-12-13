@@ -36,18 +36,32 @@ var Game = React.createClass({
     var that = this;
     var newPosition =  newState[e.key];
     if(newPosition) {
-      move = function() { that.setState(newPosition(that.state.x, that.state.y)); };
+      move = function() {
+        var futureState = newPosition(that.state.x, that.state.y);
+        if( that.willEatFood(futureState) ) {
+          var newFood = that.newFoodPosition();
+          that.setState( { x: futureState.x, y: futureState.y, foodX: newFood.x, foodY: newFood.y });
+        } else {
+          that.setState(futureState);
+        }
+      };
     }
-    this.generateFood();
   },
 
-  generateFood: function() {
+  willEatFood: function(nextCoordinate) {
+    if(nextCoordinate.x === this.state.foodX && nextCoordinate.y === this.state.foodY) {
+      return true;
+    }
+    return false;
+  },
+
+  newFoodPosition: function() {
     function randomPoint() {
       var randomNumber = Math.floor(Math.random() * ((FIELD_SIZE-GRID_SIZE) - 0)) + 1;
       var remainder = randomNumber % GRID_SIZE;
       return randomNumber - remainder;
     }
-    this.setState({foodX: randomPoint(), foodY: randomPoint() });
+    return { x: randomPoint(), y: randomPoint()};
   },
 
   render: function() {
@@ -87,4 +101,4 @@ ReactDOM.render(
   React.createElement(Game), document.getElementById('field')
 );
 
-setInterval(function() { move() }, 1000);
+setInterval(function() { move() }, 100);
