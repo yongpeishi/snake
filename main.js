@@ -15,6 +15,10 @@ var Game = React.createClass({
     }
   },
 
+  componentDidMount: function() {
+    this.refs.svgContainer.focus();
+  },
+
   changeDirection: function(e) {
     var newState = {
       'ArrowUp': function(currentX, currentY) {
@@ -105,9 +109,11 @@ var Game = React.createClass({
 
     return React.createElement('div', {},
       React.createElement(StatusBar, { gameStatus: this.state.gameStatus, gameScore: this.state.gameScore }),
-      React.createElement('svg', { 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
-        segments,
-        React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
+      React.createElement('div', { id: 'svg-container', ref: 'svgContainer', tabIndex: '1', onKeyDown: this.changeDirection },
+        React.createElement('svg', { style: { border: '1px solid black' }, 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
+          segments,
+          React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
+        )
       )
     )
   }
@@ -118,7 +124,7 @@ var StatusBar = React.createClass({
   render: function() {
     return React.createElement('div', {style: { 'display': 'flex', 'justifyContent': 'space-around'} },
       React.createElement('div', {}, this.props.gameStatus),
-      React.createElement('div', {}, this.props.gameScore)
+      React.createElement('div', {}, 'Score: ' + this.props.gameScore)
     )
   }
 });
