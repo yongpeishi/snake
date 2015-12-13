@@ -36,13 +36,14 @@ var Game = React.createClass({
     var newPosition =  newState[e.key];
     if(newPosition) {
       move = function() {
-        var snakeHead = that.state.snake[0];
-        var futureState = newPosition(snakeHead.x, snakeHead.y);
-        if( that.willEatFood(futureState) ) {
+        var currentSnake = that.state.snake;
+        var snakeHead = currentSnake[0];
+        var futureHead = newPosition(snakeHead.x, snakeHead.y);
+        if( that.willEatFood(futureHead) ) {
           var newFood = that.newFoodPosition();
-          that.setState( { snake: [futureState], foodX: newFood.x, foodY: newFood.y });
+          that.setState( { snake: [futureHead].concat( currentSnake ), foodX: newFood.x, foodY: newFood.y });
         } else {
-          that.setState( { snake: [futureState] });
+          that.setState( { snake: [futureHead].concat( currentSnake.slice(0, currentSnake.length - 1) )});
         }
       };
     }
