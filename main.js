@@ -9,7 +9,7 @@ var Game = React.createClass({
     return {
       gameStatus: '',
       gameScore: 0,
-      snake: [ {x:10, y:10} ],
+      snake: [ {x:100, y:100} ],
       foodX: 50,
       foodY: 50
     }
@@ -47,7 +47,7 @@ var Game = React.createClass({
         var snakeHead = currentSnake[0];
         var futureHead = newPosition(snakeHead.x, snakeHead.y);
 
-        if(that.runIntoWall(futureHead) || that.runIntoSelf(futureHead)) {
+        if(that.runIntoWall(futureHead) || that.isSnakeSegment(futureHead)) {
           gameOver = true;
           that.setState( { gameStatus: 'GAME OVER' } );
           return;
@@ -70,12 +70,12 @@ var Game = React.createClass({
     return false;
   },
 
-  runIntoSelf: function(head) {
+  isSnakeSegment: function(coordinate) {
     var snake = this.state.snake;
 
     var found = false;
     for(var i = 0; i < snake.length; i++) {
-      if (snake[i].x === head.x && snake[i].y === head.y ) {
+      if (snake[i].x === coordinate.x && snake[i].y === coordinate.y ) {
         found = true;
         break;
       }
@@ -96,7 +96,18 @@ var Game = React.createClass({
       var remainder = randomNumber % GRID_SIZE;
       return randomNumber - remainder;
     }
-    return { x: randomPoint(), y: randomPoint()};
+
+    var foodX, foodY;
+    var positionFound = false;
+    while(!positionFound) {
+      foodX = randomPoint();
+      foodY = randomPoint();
+      if(!this.isSnakeSegment({x: foodX, y: foodY})) {
+        positionFound = true;
+      }
+    }
+
+    return { x: foodX, y: foodY};
   },
 
   render: function() {
@@ -122,7 +133,7 @@ var Game = React.createClass({
 
 var StatusBar = React.createClass({
   render: function() {
-    return React.createElement('div', {style: { 'display': 'flex', 'justifyContent': 'space-around'} },
+    return React.createElement('div', { style: { display: 'flex', justifyContent: 'space-around', padding: '10px 0' } },
       React.createElement('div', {}, this.props.gameStatus),
       React.createElement('div', {}, 'Score: ' + this.props.gameScore)
     )
