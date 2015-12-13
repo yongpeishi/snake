@@ -43,7 +43,7 @@ var Game = React.createClass({
         var snakeHead = currentSnake[0];
         var futureHead = newPosition(snakeHead.x, snakeHead.y);
 
-        if(that.runIntoWall(futureHead)) {
+        if(that.runIntoWall(futureHead) || that.runIntoSelf(futureHead)) {
           gameOver = true;
           that.setState( { gameStatus: 'GAME OVER' } );
           return;
@@ -64,6 +64,19 @@ var Game = React.createClass({
       return true;
     }
     return false;
+  },
+
+  runIntoSelf: function(head) {
+    var snake = this.state.snake;
+
+    var found = false;
+    for(var i = 0; i < snake.length; i++) {
+      if (snake[i].x === head.x && snake[i].y === head.y ) {
+        found = true;
+        break;
+      }
+    }
+    return found;
   },
 
   foundFood: function(nextCoordinate) {
