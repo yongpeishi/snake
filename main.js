@@ -1,5 +1,5 @@
 var GRID_SIZE = 10;
-var FIELD_SIZE = 500;
+var FIELD_SIZE = 200;
 
 var gameOver = false;
 var move = function() {};
