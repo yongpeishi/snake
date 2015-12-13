@@ -45,7 +45,7 @@ var Game = React.createClass({
     function randomPoint() {
       var randomNumber = Math.floor(Math.random() * ((FIELD_SIZE-GRID_SIZE) - 0)) + 1;
       var remainder = randomNumber % GRID_SIZE;
-      return randomNumber - remainder + (GRID_SIZE/2);
+      return randomNumber - remainder;
     }
     this.setState({foodX: randomPoint(), foodY: randomPoint() });
   },
@@ -73,8 +73,8 @@ var SnakeSegment = React.createClass({
 var Food = React.createClass({
   render: function() {
     return React.createElement('circle', {
-      cx: this.props.cx,
-      cy: this.props.cy,
+      cx: this.props.cx + GRID_SIZE/2,
+      cy: this.props.cy + GRID_SIZE/2,
       r: (GRID_SIZE/2),
       stroke: 'red',
       fill: 'red'
