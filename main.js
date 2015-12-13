@@ -6,8 +6,7 @@ var move = function() {};
 var Game = React.createClass({
   getInitialState: function() {
     return {
-      x: 10,
-      y: 10,
+      snake: [ {x:10, y:10} ],
       foodX: 50,
       foodY: 50
     }
@@ -37,12 +36,13 @@ var Game = React.createClass({
     var newPosition =  newState[e.key];
     if(newPosition) {
       move = function() {
-        var futureState = newPosition(that.state.x, that.state.y);
+        var snakeHead = that.state.snake[0];
+        var futureState = newPosition(snakeHead.x, snakeHead.y);
         if( that.willEatFood(futureState) ) {
           var newFood = that.newFoodPosition();
-          that.setState( { x: futureState.x, y: futureState.y, foodX: newFood.x, foodY: newFood.y });
+          that.setState( { snake: [futureState], foodX: newFood.x, foodY: newFood.y });
         } else {
-          that.setState(futureState);
+          that.setState( { snake: [futureState] });
         }
       };
     }
@@ -65,8 +65,14 @@ var Game = React.createClass({
   },
 
   render: function() {
+    segments = [];
+    for(var i=0; i< this.state.snake.length; i++) {
+      var segment = this.state.snake[i];
+      segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i}) );
+    }
+
     return React.createElement('svg', { 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
-      React.createElement(SnakeSegment, { x: this.state.x, y: this.state.y }),
+      segments,
       React.createElement(Food, { cx: this.state.foodX, cy: this.state.foodY })
   )}
 });
