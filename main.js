@@ -35,18 +35,19 @@ var Game = React.createClass({
   },
 
   move: function() {
-    var currentSnake = this.state.player.snake;
+    var player = this.state.player;
+
+    var currentSnake = player.snake;
     var snakeHead = currentSnake[0];
-    var movement = MOVEMENT[this.state.player.direction];
+    var movement = MOVEMENT[player.direction];
     var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
 
-    if(this.runIntoWall(futureHead) || this.state.player.isSnakeSegment(futureHead)) {
+    if(this.runIntoWall(futureHead) || player.isSnakeSegment(futureHead)) {
       gameOver = true;
       this.setState( { gameStatus: 'GAME OVER' } );
       return;
     }
 
-    var player = this.state.player;
     if( this.foundFood(futureHead) ) {
       var newFood = this.newFoodPosition();
       player.incrementScore();
