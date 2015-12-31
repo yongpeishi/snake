@@ -7,7 +7,6 @@ var Game = React.createClass({
     return {
       gameStatus: '',
       player: Player(),
-      direction: NORTH,
       foodX: 50,
       foodY: 50
     }
@@ -28,15 +27,17 @@ var Game = React.createClass({
     if(arrowPressed) {
       gameStarted = true;
 
-      var newDirectionIndex = ( COMPASS.indexOf(this.state.direction) + arrowPressed + 4 ) % 4;
-      this.setState( { direction: COMPASS[newDirectionIndex] } );
+      var player = this.state.player;
+      var newDirectionIndex = ( COMPASS.indexOf(player.direction) + arrowPressed + 4 ) % 4;
+      player.direction = COMPASS[newDirectionIndex];
+      this.setState( { player: player } );
     }
   },
 
   move: function() {
     var currentSnake = this.state.player.snake;
     var snakeHead = currentSnake[0];
-    var movement = MOVEMENT[this.state.direction];
+    var movement = MOVEMENT[this.state.player.direction];
     var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
 
     if(this.runIntoWall(futureHead) || this.state.player.isSnakeSegment(futureHead)) {

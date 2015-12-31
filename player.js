@@ -2,6 +2,7 @@ function Player() {
   return {
     score: 0,
     snake: [{x: 100, y: 100}],
+    direction: NORTH,
     incrementScore: function() {
       var currentScore = this.score;
       this.score = currentScore + 1;
