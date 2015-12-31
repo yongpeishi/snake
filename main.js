@@ -1,20 +1,3 @@
-var GRID_SIZE = 10;
-var FIELD_SIZE = 200;
-
-var NORTH = "NORTH";
-var EAST = "EAST";
-var SOUTH = "SOUTH";
-var WEST = "WEST";
-
-var COMPASS =  [ NORTH, EAST, SOUTH, WEST ]
-
-var MOVEMENT = {
-  NORTH: { x: 0, y: GRID_SIZE*-1 },
-  EAST:  { x: GRID_SIZE, y: 0 },
-  SOUTH: { x: 0, y: GRID_SIZE },
-  WEST:  { x: GRID_SIZE*-1, y: 0}
-}
-
 var gameStarted = false;
 var gameOver = false;
 var move = function() {};
@@ -23,8 +6,7 @@ var Game = React.createClass({
   getInitialState: function() {
     return {
       gameStatus: '',
-      gameScore: 0,
-      snake: [ {x:100, y:100} ],
+      player: Player(),
       direction: NORTH,
       foodX: 50,
       foodY: 50
@@ -52,22 +34,26 @@ var Game = React.createClass({
   },
 
   move: function() {
-    var currentSnake = this.state.snake;
+    var currentSnake = this.state.player.snake;
     var snakeHead = currentSnake[0];
     var movement = MOVEMENT[this.state.direction];
     var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
 
-    if(this.runIntoWall(futureHead) || this.isSnakeSegment(futureHead)) {
+    if(this.runIntoWall(futureHead) || this.state.player.isSnakeSegment(futureHead)) {
       gameOver = true;
       this.setState( { gameStatus: 'GAME OVER' } );
       return;
     }
 
+    var player = this.state.player;
     if( this.foundFood(futureHead) ) {
       var newFood = this.newFoodPosition();
-      this.setState( { gameScore: this.state.gameScore + 1, snake: [futureHead].concat( currentSnake ), foodX: newFood.x, foodY: newFood.y });
+      player.incrementScore();
+      player.snake = [futureHead].concat( currentSnake );
+      this.setState({ player: player, foodX: newFood.x, foodY: newFood.y });
     } else {
-      this.setState( { snake: [futureHead].concat( currentSnake.slice(0, currentSnake.length - 1) )});
+      player.snake = [futureHead].concat( currentSnake.slice(0, currentSnake.length-1) );
+      this.setState({ player: player });
     }
   },
 
@@ -78,18 +64,6 @@ var Game = React.createClass({
     return false;
   },
 
-  isSnakeSegment: function(coordinate) {
-    var snake = this.state.snake;
-
-    var found = false;
-    for(var i = 0; i < snake.length; i++) {
-      if (snake[i].x === coordinate.x && snake[i].y === coordinate.y ) {
-        found = true;
-        break;
-      }
-    }
-    return found;
-  },
 
   foundFood: function(nextCoordinate) {
     if(nextCoordinate.x === this.state.foodX && nextCoordinate.y === this.state.foodY) {
@@ -110,7 +84,7 @@ var Game = React.createClass({
     while(!positionFound) {
       foodX = randomPoint();
       foodY = randomPoint();
-      if(!this.isSnakeSegment({x: foodX, y: foodY})) {
+      if(!this.state.player.isSnakeSegment({x: foodX, y: foodY})) {
         positionFound = true;
       }
     }
@@ -120,14 +94,14 @@ var Game = React.createClass({
 
   render: function() {
     segments = [];
-    segments.push( React.createElement(SnakeHead, { x: this.state.snake[0].x, y: this.state.snake[0].y, key: 0}) );
-    for(var i=1; i< this.state.snake.length; i++) {
-      var segment = this.state.snake[i];
+    segments.push( React.createElement(SnakeHead, { x: this.state.player.snake[0].x, y: this.state.player.snake[0].y, key: 0}) );
+    for(var i=1; i< this.state.player.snake.length; i++) {
+      var segment = this.state.player.snake[i];
       segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i}) );
     }
 
     return React.createElement('div', {},
-      React.createElement(StatusBar, { gameStatus: this.state.gameStatus, gameScore: this.state.gameScore }),
+      React.createElement(StatusBar, { gameStatus: this.state.gameStatus, playerScore: this.state.player.score }),
       React.createElement('div', { id: 'svg-container', ref: 'svgContainer', style: { display: 'flex', justifyContent: 'center' }, tabIndex: '1', onKeyDown: this.changeDirection },
         React.createElement('svg', { style: { border: '1px solid black' }, 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
           segments,
@@ -143,7 +117,7 @@ var StatusBar = React.createClass({
   render: function() {
     return React.createElement('div', { style: { display: 'flex', justifyContent: 'space-around', padding: '5px 0' } },
       React.createElement('div', {}, this.props.gameStatus),
-      React.createElement('div', {}, 'Score: ' + this.props.gameScore)
+      React.createElement('div', {}, 'Score: ' + this.props.playerScore)
     )
   }
 });
