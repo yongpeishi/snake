@@ -1,6 +1,21 @@
 var GRID_SIZE = 10;
 var FIELD_SIZE = 200;
 
+var NORTH = "NORTH";
+var EAST = "EAST";
+var SOUTH = "SOUTH";
+var WEST = "WEST";
+
+var COMPASS =  [ NORTH, EAST, SOUTH, WEST ]
+
+var MOVEMENT = {
+  NORTH: { x: 0, y: GRID_SIZE*-1 },
+  EAST:  { x: GRID_SIZE, y: 0 },
+  SOUTH: { x: 0, y: GRID_SIZE },
+  WEST:  { x: GRID_SIZE*-1, y: 0}
+}
+
+var gameStarted = false;
 var gameOver = false;
 var move = function() {};
 
@@ -10,6 +25,7 @@ var Game = React.createClass({
       gameStatus: '',
       gameScore: 0,
       snake: [ {x:100, y:100} ],
+      direction: NORTH,
       foodX: 50,
       foodY: 50
     }
@@ -17,49 +33,41 @@ var Game = React.createClass({
 
   componentDidMount: function() {
     this.refs.svgContainer.focus();
+    move = this.move;
   },
 
   changeDirection: function(e) {
-    var newState = {
-      'ArrowUp': function(currentX, currentY) {
-        newY = currentY - GRID_SIZE;
-        return {x: currentX, y: newY};
-      },
-      'ArrowDown': function(currentX, currentY) {
-        newY = currentY + GRID_SIZE;
-        return {x: currentX, y: newY}
-      },
-      'ArrowLeft': function(currentX, currentY) {
-        newX = currentX - GRID_SIZE;
-        return {x: newX, y: currentY}
-      },
-      'ArrowRight': function(currentX, currentY) {
-        newX = currentX + GRID_SIZE;
-        return {x: newX, y: currentY}
-      }
-    };
+    var turn = {
+      'ArrowLeft' : -1,
+      'ArrowRight' : 1
+    }
 
-    var that = this;
-    var newPosition =  newState[e.key];
-    if(newPosition) {
-      move = function() {
-        var currentSnake = that.state.snake;
-        var snakeHead = currentSnake[0];
-        var futureHead = newPosition(snakeHead.x, snakeHead.y);
+    var arrowPressed = turn[e.key];
+    if(arrowPressed) {
+      gameStarted = true;
 
-        if(that.runIntoWall(futureHead) || that.isSnakeSegment(futureHead)) {
-          gameOver = true;
-          that.setState( { gameStatus: 'GAME OVER' } );
-          return;
-        }
+      var newDirectionIndex = ( COMPASS.indexOf(this.state.direction) + arrowPressed + 4 ) % 4;
+      this.setState( { direction: COMPASS[newDirectionIndex] } );
+    }
+  },
 
-        if( that.foundFood(futureHead) ) {
-          var newFood = that.newFoodPosition();
-          that.setState( { gameScore: that.state.gameScore + 1, snake: [futureHead].concat( currentSnake ), foodX: newFood.x, foodY: newFood.y });
-        } else {
-          that.setState( { snake: [futureHead].concat( currentSnake.slice(0, currentSnake.length - 1) )});
-        }
-      };
+  move: function() {
+    var currentSnake = this.state.snake;
+    var snakeHead = currentSnake[0];
+    var movement = MOVEMENT[this.state.direction];
+    var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
+
+    if(this.runIntoWall(futureHead) || this.isSnakeSegment(futureHead)) {
+      gameOver = true;
+      this.setState( { gameStatus: 'GAME OVER' } );
+      return;
+    }
+
+    if( this.foundFood(futureHead) ) {
+      var newFood = this.newFoodPosition();
+      this.setState( { gameScore: this.state.gameScore + 1, snake: [futureHead].concat( currentSnake ), foodX: newFood.x, foodY: newFood.y });
+    } else {
+      this.setState( { snake: [futureHead].concat( currentSnake.slice(0, currentSnake.length - 1) )});
     }
   },
 
@@ -183,7 +191,7 @@ ReactDOM.render(
 );
 
 function runGame() {
-  if(!gameOver) {
+  if(gameStarted && !gameOver) {
     move();
   }
 }
