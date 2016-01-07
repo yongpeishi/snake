@@ -6,7 +6,7 @@ var Game = React.createClass({
   getInitialState: function() {
     return {
       gameStatus: '',
-      player: Player(),
+      players: [Player()],
       foodX: 50,
       foodY: 50
     }
@@ -27,15 +27,15 @@ var Game = React.createClass({
     if(arrowPressed) {
       gameStarted = true;
 
-      var player = this.state.player;
+      var player = this.state.players[0];
       var newDirectionIndex = ( COMPASS.indexOf(player.direction) + arrowPressed + 4 ) % 4;
       player.direction = COMPASS[newDirectionIndex];
-      this.setState( { player: player } );
+      this.setState( { players: [player] } );
     }
   },
 
   move: function() {
-    var player = this.state.player;
+    var player = this.state.players[0];
 
     var currentSnake = player.snake;
     var snakeHead = currentSnake[0];
@@ -52,10 +52,10 @@ var Game = React.createClass({
       var newFood = this.newFoodPosition();
       player.incrementScore();
       player.snake = [futureHead].concat( currentSnake );
-      this.setState({ player: player, foodX: newFood.x, foodY: newFood.y });
+      this.setState({ players: [player], foodX: newFood.x, foodY: newFood.y });
     } else {
       player.snake = [futureHead].concat( currentSnake.slice(0, currentSnake.length-1) );
-      this.setState({ player: player });
+      this.setState({ players: [player] });
     }
   },
 
@@ -86,7 +86,7 @@ var Game = React.createClass({
     while(!positionFound) {
       foodX = randomPoint();
       foodY = randomPoint();
-      if(!this.state.player.isSnakeSegment({x: foodX, y: foodY})) {
+      if(!this.state.players[0].isSnakeSegment({x: foodX, y: foodY})) {
         positionFound = true;
       }
     }
@@ -96,14 +96,14 @@ var Game = React.createClass({
 
   render: function() {
     segments = [];
-    segments.push( React.createElement(SnakeHead, { x: this.state.player.snake[0].x, y: this.state.player.snake[0].y, key: 0}) );
-    for(var i=1; i< this.state.player.snake.length; i++) {
-      var segment = this.state.player.snake[i];
+    segments.push( React.createElement(SnakeHead, { x: this.state.players[0].snake[0].x, y: this.state.players[0].snake[0].y, key: 0}) );
+    for(var i=1; i< this.state.players[0].snake.length; i++) {
+      var segment = this.state.players[0].snake[i];
       segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i}) );
     }
 
     return React.createElement('div', {},
-      React.createElement(StatusBar, { gameStatus: this.state.gameStatus, playerScore: this.state.player.score }),
+      React.createElement(StatusBar, { gameStatus: this.state.gameStatus, playerScore: this.state.players[0].score }),
       React.createElement('div', { id: 'svg-container', ref: 'svgContainer', style: { display: 'flex', justifyContent: 'center' }, tabIndex: '1', onKeyDown: this.changeDirection },
         React.createElement('svg', { style: { border: '1px solid black' }, 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
           segments,
