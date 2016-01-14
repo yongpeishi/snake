@@ -17,20 +17,28 @@ var Game = React.createClass({
     move = this.move;
   },
 
+  updatePlayer: function(playerNumber, newPlayer) {
+    var newPlayersSet = this.state.players;
+    newPlayersSet[playerNumber] = newPlayer;
+    this.setState( { players: newPlayersSet } );
+  },
+
   changeDirection: function(e) {
-    var turn = {
-      'ArrowLeft' : -1,
-      'ArrowRight' : 1
+    var keyCodes = {
+      65 : { playerNumber: 0, rotation: -1},
+      83 : { playerNumber: 0, rotation: 1},
+      75 : { playerNumber: 1, rotation: -1},
+      76 : { playerNumber: 1, rotation: 1}
     }
 
-    var arrowPressed = turn[e.key];
-    if(arrowPressed) {
+    var keyCode = keyCodes[e.keyCode];
+    if(keyCode) {
       gameStarted = true;
 
-      var player = this.state.players[0];
-      var newDirectionIndex = ( COMPASS.indexOf(player.direction) + arrowPressed + 4 ) % 4;
+      var player = this.state.players[keyCode.playerNumber];
+      var newDirectionIndex = ( COMPASS.indexOf(player.direction) + keyCode.rotation + 4 ) % 4;
       player.direction = COMPASS[newDirectionIndex];
-      this.setState( { players: [player] } );
+      this.updatePlayer(keyCode.playerNumber, player);
     }
   },
 
