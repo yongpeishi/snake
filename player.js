@@ -1,7 +1,7 @@
-function Player() {
+function Player(initX, initY) {
   return {
     score: 0,
-    snake: [{x: 100, y: 100}],
+    snake: [{x: initX, y: initY}],
     direction: NORTH,
     incrementScore: function() {
       var currentScore = this.score;
