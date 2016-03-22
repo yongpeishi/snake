@@ -43,18 +43,16 @@ var Game = React.createClass({
   },
 
   move: function() {
-    var player = this.state.players[0];
+    var players = this.state.players;
+    var players_future_state = [];
 
-    var currentSnake = player.snake;
-    var snakeHead = currentSnake[0];
-    var movement = MOVEMENT[player.direction];
-    var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
+    for(var i=0; i < players.length; i++) {
+      var player = players[i];
+      var currentSnake = player.snake;
+      var snakeHead = currentSnake[0];
+      var movement = MOVEMENT[player.direction];
 
-    if(this.runIntoWall(futureHead) || player.isSnakeSegment(futureHead)) {
-      gameOver = true;
-      this.setState( { gameStatus: 'GAME OVER' } );
-      return;
-    }
+      var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
 
     if( this.foundFood(futureHead) ) {
       var newFood = this.newFoodPosition();
