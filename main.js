@@ -45,6 +45,7 @@ var Game = React.createClass({
   move: function() {
     var players = this.state.players;
     var playersFutureState = [];
+    var makeNewFood = false;
 
     for(var i=0; i < players.length; i++) {
       var player = players[i];
@@ -56,6 +57,10 @@ var Game = React.createClass({
 
       if(this.runIntoWall(futureHead) || player.isSnakeSegment(futureHead)) {
         gameOver = true;
+      } else if( this.foundFood(futureHead) ) {
+        makeNewFood = true;
+        player.incrementScore();
+        player.snake = [futureHead].concat( currentSnake );
       } else {
         player.snake = [futureHead].concat( currentSnake.slice(0, currentSnake.length-1) );
       }
@@ -63,8 +68,12 @@ var Game = React.createClass({
       playersFutureState.push(player);
     }
 
-    this.setState({ players: playersFutureState, isGameOver: gameOver });
-
+    if(!gameOver && makeNewFood) {
+      var newFood = this.newFoodPosition();
+      this.setState({ players: playersFutureState, foodX: newFood.x, foodY: newFood.y });
+    } else {
+      this.setState({ players: playersFutureState, isGameOver: gameOver });
+    }
   },
 
   runIntoWall: function(head) {
