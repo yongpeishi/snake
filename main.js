@@ -84,7 +84,10 @@ var Game = React.createClass({
     this.checkGameStatus(playersFutureState);
 
     if(!gameOver && makeNewFood) {
-      var newFood = this.newFoodPosition();
+      var allSnakeSegments = playersFutureState.reduce(function(segments, p) {
+        return segments.concat(p.snake);
+      }, []);
+      var newFood = this.newFoodPosition(allSnakeSegments);
       this.setState({ players: playersFutureState, foodX: newFood.x, foodY: newFood.y });
     } else {
       this.setState({ players: playersFutureState, isGameOver: gameOver });
@@ -105,7 +108,7 @@ var Game = React.createClass({
     return false;
   },
 
-  newFoodPosition: function() {
+  newFoodPosition: function(snakeSegments) {
     function randomPoint() {
       var randomNumber = Math.floor(Math.random() * ((FIELD_SIZE-GRID_SIZE) - 0)) + 1;
       var remainder = randomNumber % GRID_SIZE;
@@ -117,7 +120,8 @@ var Game = React.createClass({
     while(!positionFound) {
       foodX = randomPoint();
       foodY = randomPoint();
-      if(!this.state.players[0].isSnakeSegment({x: foodX, y: foodY})) {
+      var occupiedSpace = _.some(snakeSegments, {x: foodX, y:foodY});
+      if( !occupiedSpace ) {
         positionFound = true;
       }
     }
