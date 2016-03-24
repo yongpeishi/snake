@@ -25,10 +25,10 @@ var Game = React.createClass({
 
   changeDirection: function(e) {
     var keyCodes = {
-      65 : { playerNumber: 0, rotation: -1},
-      83 : { playerNumber: 0, rotation: 1},
-      75 : { playerNumber: 1, rotation: -1},
-      76 : { playerNumber: 1, rotation: 1}
+      65 : { playerNumber: 0, rotation: -1}, //A
+      83 : { playerNumber: 0, rotation: 1},  //S
+      75 : { playerNumber: 1, rotation: -1}, //K
+      76 : { playerNumber: 1, rotation: 1}   //L
     }
 
     var keyCode = keyCodes[e.keyCode];
@@ -49,25 +49,28 @@ var Game = React.createClass({
 
     for(var i=0; i < players.length; i++) {
       var player = players[i];
-      var currentSnake = player.snake;
-      var snakeHead = currentSnake[0];
-      var movement = MOVEMENT[player.direction];
+      if(player.isAlive) {
+        var currentSnake = player.snake;
+        var snakeHead = currentSnake[0];
+        var movement = MOVEMENT[player.direction];
 
-      var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
+        var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
 
-      if(this.runIntoWall(futureHead) || player.isSnakeSegment(futureHead)) {
-        player.isAlive = false;
-      } else if( this.foundFood(futureHead) ) {
-        makeNewFood = true;
-        player.incrementScore();
-        player.snake = [futureHead].concat( currentSnake );
-      } else {
-        player.snake = [futureHead].concat( currentSnake.slice(0, currentSnake.length-1) );
+        if(this.runIntoWall(futureHead) || player.isSnakeSegment(futureHead)) {
+          player.isAlive = false;
+        } else if( this.foundFood(futureHead) ) {
+          makeNewFood = true;
+          player.incrementScore();
+          player.snake = [futureHead].concat( currentSnake );
+        } else {
+          player.snake = [futureHead].concat( currentSnake.slice(0, currentSnake.length-1) );
+        }
       }
 
       playersFutureState.push(player);
     }
 
+    // check if run into other snakes
     for(var i=0; i < playersFutureState.lenght; i++) {
       var index = playersFutureState.indexOf(player);
 
@@ -77,6 +80,7 @@ var Game = React.createClass({
       player.processIntersectionWith(cloneAllPlayers);
     }
 
+    // check if all dead
     this.checkGameStatus(playersFutureState);
 
     if(!gameOver && makeNewFood) {
