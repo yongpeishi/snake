@@ -56,7 +56,7 @@ var Game = React.createClass({
       var futureHead = { x: snakeHead.x + movement.x, y: snakeHead.y + movement.y };
 
       if(this.runIntoWall(futureHead) || player.isSnakeSegment(futureHead)) {
-        gameOver = true;
+        player.isAlive = false;
       } else if( this.foundFood(futureHead) ) {
         makeNewFood = true;
         player.incrementScore();
@@ -67,6 +67,17 @@ var Game = React.createClass({
 
       playersFutureState.push(player);
     }
+
+    for(var i=0; i < playersFutureState.lenght; i++) {
+      var index = playersFutureState.indexOf(player);
+
+      var cloneAllPlayers = playersFutureState.slice();
+      var player = cloneAllPlayers.splice(index, 1);
+
+      player.processIntersectionWith(cloneAllPlayers);
+    }
+
+    this.checkGameStatus(playersFutureState);
 
     if(!gameOver && makeNewFood) {
       var newFood = this.newFoodPosition();
@@ -82,7 +93,6 @@ var Game = React.createClass({
     }
     return false;
   },
-
 
   foundFood: function(nextCoordinate) {
     if(nextCoordinate.x === this.state.foodX && nextCoordinate.y === this.state.foodY) {
@@ -109,6 +119,13 @@ var Game = React.createClass({
     }
 
     return { x: foodX, y: foodY};
+  },
+
+  checkGameStatus: function(players) {
+    var hasAlive = _.some(players, { isAlive: true });
+    if(!hasAlive) {
+      gameOver = true;
+    }
   },
 
   render: function() {

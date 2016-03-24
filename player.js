@@ -3,6 +3,7 @@ function Player(initX, initY) {
     score: 0,
     snake: [{x: initX, y: initY}],
     direction: NORTH,
+    isAlive: true,
     incrementScore: function() {
       var currentScore = this.score;
       this.score = currentScore + 1;
@@ -17,5 +18,15 @@ function Player(initX, initY) {
       }
       return found;
     },
+    processIntersectionWith: function(otherPlayers) {
+      var allSnakeSegments = otherPlayers.reduce(function(segments, p) {
+        return segments.concat(p.snake);
+      }, []);
+      var head = this.snake[0];
+      var intersected = _.some(allSnakeSegments, head);
+      if(intersected) {
+        this.isAlive = false;
+      }
+    }
   }
 }
