@@ -71,11 +71,11 @@ var Game = React.createClass({
     }
 
     // check if run into other snakes
-    for(var i=0; i < playersFutureState.lenght; i++) {
+    for(var i=0; i < playersFutureState.length; i++) {
       var index = playersFutureState.indexOf(player);
 
       var cloneAllPlayers = playersFutureState.slice();
-      var player = cloneAllPlayers.splice(index, 1);
+      var player = cloneAllPlayers.splice(index, 1)[0];
 
       player.processIntersectionWith(cloneAllPlayers);
     }
@@ -151,7 +151,7 @@ var Game = React.createClass({
     }
 
     return React.createElement('div', {},
-      React.createElement(StatusBar, { isGameOver: this.state.isGameOver, playerScore: this.state.players[0].score }),
+      React.createElement(StatusBar, { isGameOver: this.state.isGameOver, players: this.state.players }),
       React.createElement('div', { id: 'svg-container', ref: 'svgContainer', style: { display: 'flex', justifyContent: 'center' }, tabIndex: '1', onKeyDown: this.changeDirection },
         React.createElement('svg', { style: { border: '1px solid black' }, 'width': FIELD_SIZE, 'height': FIELD_SIZE, tabIndex: '1', onKeyDown: this.changeDirection },
           snakes[0],
@@ -169,7 +169,10 @@ var StatusBar = React.createClass({
     var gameStatus = this.props.isGameOver ? 'GAME OVER' : '';
     return React.createElement('div', { style: { display: 'flex', justifyContent: 'space-around', padding: '5px 0' } },
       React.createElement('div', {}, gameStatus),
-      React.createElement('div', {}, 'Score: ' + this.props.playerScore)
+      React.createElement('div', {},
+        React.createElement('div', {}, 'Player 1 score: ' + this.props.players[0].score),
+        React.createElement('div', {}, 'Player 2 score: ' + this.props.players[1].score)
+      )
     )
   }
 });
