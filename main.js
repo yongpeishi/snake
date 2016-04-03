@@ -1,3 +1,16 @@
+var style = {
+  players: [
+    {
+      head: 'darkgreen',
+      segment: 'darkolivegreen'
+    },
+    {
+      head: 'darkblue',
+      segment: 'steelblue',
+    }
+  ]
+};
+
 var gameStarted = false;
 var gameOver = false;
 var move = function() {};
@@ -142,10 +155,10 @@ var Game = React.createClass({
     for(var p=0; p < this.state.players.length; p++) {
       var player = this.state.players[p];
       var segments = [];
-      segments.push( React.createElement(SnakeHead, { x: player.snake[0].x, y: player.snake[0].y, key: 0}) );
+      segments.push( React.createElement(SnakeHead, { x: player.snake[0].x, y: player.snake[0].y, key: 0, color: style.players[p].head }) );
       for(var i=1; i< player.snake.length; i++) {
         var segment = player.snake[i];
-        segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i}) );
+        segments.push( React.createElement(SnakeSegment, { x: segment.x, y: segment.y, key: i, color: style.players[p].segment }) );
       }
       snakes.push(segments);
     }
@@ -170,8 +183,8 @@ var StatusBar = React.createClass({
     return React.createElement('div', { style: { display: 'flex', justifyContent: 'space-around', padding: '5px 0' } },
       React.createElement('div', {}, gameStatus),
       React.createElement('div', {},
-        React.createElement('div', {}, 'Player 1 score: ' + this.props.players[0].score),
-        React.createElement('div', {}, 'Player 2 score: ' + this.props.players[1].score)
+        React.createElement('div', { style: { color: style.players[0].head } }, 'Player 1 score: ' + this.props.players[0].score),
+        React.createElement('div', { style: { color: style.players[1].head } }, 'Player 2 score: ' + this.props.players[1].score)
       )
     )
   }
@@ -184,8 +197,8 @@ var SnakeHead = React.createClass({
       y: this.props.y,
       width: GRID_SIZE,
       height: GRID_SIZE,
-      stroke: 'darkgreen',
-      fill: 'darkgreen'
+      stroke: this.props.color,
+      fill: this.props.color
     })
   }
 });
@@ -197,8 +210,8 @@ var SnakeSegment = React.createClass({
       y: this.props.y,
       width: GRID_SIZE,
       height: GRID_SIZE,
-      stroke: 'darkolivegreen',
-      fill: 'darkolivegreen'
+      stroke: this.props.color,
+      fill: this.props.color
     })
   }
 });
