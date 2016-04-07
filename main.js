@@ -85,11 +85,8 @@ var Game = React.createClass({
 
     // check if run into other snakes
     for(var i=0; i < playersFutureState.length; i++) {
-      var index = playersFutureState.indexOf(player);
-
       var cloneAllPlayers = playersFutureState.slice();
-      var player = cloneAllPlayers.splice(index, 1)[0];
-
+      var player = cloneAllPlayers.splice(i, 1)[0];
       player.processIntersectionWith(cloneAllPlayers);
     }
 
